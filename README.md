@@ -22,16 +22,17 @@ Each participant runs their own Claude Code with their own subscription. Session
 
 ## Install
 
-Copy the three components to your Claude Code config:
+```bash
+git clone https://github.com/Playful-Sincerity/covibe.git
+cd covibe
+./install.sh
+```
+
+Or copy manually:
 
 ```bash
-# Skill
 cp -r skills/covibe/ ~/.claude/skills/covibe/
-
-# Rule (activates only during CoVibe sessions)
 cp rules/covibe-coordination.md ~/.claude/rules/
-
-# Hook script
 cp scripts/covibe-sync.sh ~/.claude/scripts/
 chmod +x ~/.claude/scripts/covibe-sync.sh
 ```
