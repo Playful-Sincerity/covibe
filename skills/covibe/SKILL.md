@@ -102,12 +102,12 @@ Claim a job from the board. **The claim MUST be pushed before any other action.*
 3. Verify `status: ready` and `assigned_to: null`. Also check that all jobs listed in `Dependencies` or `blocked_by` have `status: done`.
 4. Update the job file: `status: in-progress`, `assigned_to: <user>`, `updated_at: now`.
 5. Update your session file: `current_job: <job-id>`, update Current Task.
-6. **ATOMIC PUSH — immediately after steps 4-5, commit and push in a SINGLE Bash call. No other tool calls between editing the files and pushing. Other sessions may pull at any moment — if the push hasn't happened, they won't see your claim and may claim the same job.**
+6. **ATOMIC PUSH TO MAIN — immediately after steps 4-5, commit and push `.covibe/` to main in a SINGLE Bash call. No other tool calls between editing the files and pushing.** `.covibe/` changes always live on main so all sessions can see them regardless of what branch they're on.
    ```bash
    cd <repo> && git add .covibe/ && git commit -m "covibe: <user> claimed <job-id>" && git push
    ```
    If push fails (conflict), pull and re-check — if someone else claimed it first, tell the user and suggest another job.
-7. Create a feature branch: `git checkout -b <user>/<job-id>`
+7. **Then** create a feature branch for the actual code work: `git checkout -b <user>/<job-id>`. Code goes on this branch. `.covibe/` syncs are handled by the covibe-sync hook which always pushes `.covibe/` to main even from a feature branch.
 8. Present the full job brief (context, task, acceptance criteria) and begin working on it.
 
 ---

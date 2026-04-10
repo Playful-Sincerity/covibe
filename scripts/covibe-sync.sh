@@ -28,15 +28,41 @@ NOW_EPOCH=$(date +%s)
 STALE_MINUTES=5
 NUDGE_STATE="/tmp/.covibe-nudge"
 
-# Pull latest (quiet, don't block on conflicts)
-cd "$REPO" && git pull --rebase --quiet 2>/dev/null || true
+# Always push .covibe/ to main, even when on a feature branch.
+# Code stays on the feature branch; coordination stays on main.
+cd "$REPO" || exit 0
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 
-# Commit and push any .covibe/ changes
-if cd "$REPO" && git status --porcelain .covibe/ 2>/dev/null | grep -q '.'; then
-  git add .covibe/ 2>/dev/null
-  git commit -m "covibe: ${USER} sync" --quiet 2>/dev/null || true
-  git push --quiet 2>/dev/null || true
-  hook_log "covibe-sync" "pushed .covibe/ changes" 2>/dev/null || true
+if git status --porcelain .covibe/ 2>/dev/null | grep -q '.'; then
+  if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
+    # Already on main — just commit and push
+    git pull --rebase --quiet 2>/dev/null || true
+    git add .covibe/ 2>/dev/null
+    git commit -m "covibe: ${USER} sync" --quiet 2>/dev/null || true
+    git push --quiet 2>/dev/null || true
+  else
+    # On a feature branch — stash, switch to main, commit .covibe/, switch back
+    git stash --quiet --include-untracked 2>/dev/null || true
+    git checkout main --quiet 2>/dev/null || git checkout master --quiet 2>/dev/null || true
+    git pull --rebase --quiet 2>/dev/null || true
+    # Restore .covibe/ changes from the feature branch
+    git checkout "$CURRENT_BRANCH" -- .covibe/ 2>/dev/null || true
+    git add .covibe/ 2>/dev/null
+    if git diff --cached --quiet .covibe/ 2>/dev/null; then
+      : # nothing to commit
+    else
+      git commit -m "covibe: ${USER} sync" --quiet 2>/dev/null || true
+      git push --quiet 2>/dev/null || true
+    fi
+    git checkout "$CURRENT_BRANCH" --quiet 2>/dev/null || true
+    git stash pop --quiet 2>/dev/null || true
+  fi
+  hook_log "covibe-sync" "pushed .covibe/ to main" 2>/dev/null || true
+else
+  # No .covibe/ changes — just pull latest main for visibility
+  if [ "$CURRENT_BRANCH" = "main" ] || [ "$CURRENT_BRANCH" = "master" ]; then
+    git pull --rebase --quiet 2>/dev/null || true
+  fi
 fi
 
 # Nudge if session file is stale
