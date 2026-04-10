@@ -1,0 +1,19 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "playful-sincerity",
+  "description": "Tools from Playful Sincerity for collaborative AI development",
+  "owner": {
+    "name": "Playful Sincerity",
+    "email": "wisdom@playfulsincerity.org",
+    "url": "https://playfulsincerity.org"
+  },
+  "plugins": [
+    {
+      "name": "covibe",
+      "description": "Multiplayer Claude Code — coordinate multiple sessions through a shared git repo",
+      "source": ".",
+      "version": "1.0.0",
+      "category": "productivity"
+    }
+  ]
+}

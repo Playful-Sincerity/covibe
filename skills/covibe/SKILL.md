@@ -88,7 +88,7 @@ Initialize or join a CoVibe session.
 
 Pull latest, read all sessions and jobs, present a summary:
 - **Active sessions:** who, current task, last updated
-- **Job board:** grouped by status (ready, in-progress, review, done, blocked)
+- **Job board:** If phased, show the phase structure with status per phase (e.g., "Phase 1: 3/5 done, 2 in-progress"). If flat, group by status (ready, in-progress, review, done, blocked). Always highlight which jobs are claimable now (ready + dependencies met).
 - **Recent messages:** last 5 from `.covibe/messages/`
 
 ---
@@ -98,12 +98,13 @@ Pull latest, read all sessions and jobs, present a summary:
 Claim a job from the board.
 
 1. Pull latest.
-2. Read `.covibe/jobs/<job-id>.md`. Verify status is `ready` and `assigned_to` is null.
-3. Update the job file: `status: in-progress`, `assigned_to: <user>`, `updated_at: now`.
-4. Create a feature branch: `git checkout -b <user>/<job-id>`
-5. Update your session file: `current_job: <job-id>`, update Current Task.
-6. Commit `.covibe/` changes and push.
-7. Present the job details and begin working on it.
+2. Find the job file — search `.covibe/jobs/` recursively for a file whose `id` frontmatter matches `<job-id>` (handles both flat and phased structures).
+3. Verify `status: ready` and `assigned_to: null`. Also check that all jobs listed in `Dependencies` or `blocked_by` have `status: done`.
+4. Update the job file: `status: in-progress`, `assigned_to: <user>`, `updated_at: now`.
+5. Create a feature branch: `git checkout -b <user>/<job-id>`
+6. Update your session file: `current_job: <job-id>`, update Current Task.
+7. Commit `.covibe/` changes and push.
+8. Present the full job brief (context, task, acceptance criteria) and begin working on it.
 
 ---
 
@@ -172,7 +173,32 @@ Enter orchestrator mode. For the person or session coordinating the project.
 
 The orchestrator writes to `.covibe/sessions/orchestrator.md`.
 
-When decomposing work into jobs, create one file per job at `.covibe/jobs/<job-id>.md`:
+#### Decomposing Work — Phased Job Structure
+
+When decomposing work, create a phased directory structure under `.covibe/jobs/`. This uses the multi-session decomposition format so jobs are both a coordination tool and self-contained session briefs.
+
+**Directory structure:**
+```
+.covibe/jobs/
+├── README.md                                  ← Phase map + visual dependency graph
+├── phase-1-<name>/
+│   ├── README.md                              ← Subphase dependency graph + launch order
+│   ├── subphase-A-PARALLEL-no-deps/
+│   │   ├── 01-<job-name>.md
+│   │   └── 02-<job-name>.md
+│   └── subphase-B-CRITICAL-needs-A/
+│       └── 01-<job-name>.md
+├── phase-2-<name>/
+│   └── ...
+```
+
+**Directory naming conventions:**
+- Top-level phases: `phase-{N}-{name}` — numbers for ordering
+- Subphases: `subphase-{LETTER}-{TYPE}-{dependency}`
+  - TYPE: `PARALLEL` (can run alongside others) or `CRITICAL` (must complete before next)
+  - Dependency: `no-deps`, `needs-setup`, `needs-subphase-X`
+
+**Each job file is a session brief with CoVibe frontmatter:**
 ```markdown
 ---
 id: <job-id>
@@ -184,24 +210,41 @@ created_at: YYYY-MM-DD HH:MM
 updated_at: YYYY-MM-DD HH:MM
 completed_at: null
 branch: null
-blocks: []
-blocked_by: []
 appetite: small|medium|large
 workflow_type: research|implementation|review
 folder: <target directory or null>
 ---
 
-## Description
-<What needs to be done. Enough context that a session can start without asking questions.>
+# Session Brief: <TITLE>
+
+**Dependencies:** <None — can start immediately | Needs phase-1/subphase-A to complete>
+**Can run parallel with:** <Other jobs that can run simultaneously>
+**Feeds into:** <What downstream work uses this output>
+
+## Context
+<What this project is, where it lives, enough for a cold start>
+
+Read these files first:
+- <CLAUDE.md path>
+- <Key files needed>
+
+## Task
+<Clear, specific instructions. Enough detail to execute without asking questions.>
 
 ## Acceptance Criteria
-<How to know it's done.>
+<How to know it's done. Specific, measurable.>
 
 ## Notes
 <Additional context, links, gotchas.>
 ```
 
-After creating jobs, commit, push, and post a summary message.
+**README at each level:**
+- Top-level `jobs/README.md`: full phase map with ASCII dependency graph, overall scope
+- Each phase `README.md`: subphase launch order, which subphases are parallel vs critical
+
+**For simple projects** (3-5 jobs, no phases needed): use flat files directly in `.covibe/jobs/` with the same session-brief format. Only create the phased structure when there are genuine phases with dependencies.
+
+After creating the structure, commit, push, and post a summary message listing all jobs and which are ready to claim immediately.
 
 ---
 

@@ -22,39 +22,42 @@ Each participant runs their own Claude Code with their own subscription. Session
 
 ## Install
 
+### As a Claude Code plugin (recommended)
+
+Add this to your `~/.claude/settings.json`:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "playful-sincerity": {
+      "source": "github",
+      "repo": "Playful-Sincerity/covibe"
+    }
+  }
+}
+```
+
+Then enable the plugin:
+
+```json
+{
+  "enabledPlugins": {
+    "covibe@playful-sincerity": true
+  }
+}
+```
+
+That's it. The skill, coordination guidance, and sync hook all install automatically.
+
+### Manual install
+
 ```bash
 git clone https://github.com/Playful-Sincerity/covibe.git
 cd covibe
 ./install.sh
 ```
 
-Or copy manually:
-
-```bash
-cp -r skills/covibe/ ~/.claude/skills/covibe/
-cp rules/covibe-coordination.md ~/.claude/rules/
-cp scripts/covibe-sync.sh ~/.claude/scripts/
-chmod +x ~/.claude/scripts/covibe-sync.sh
-```
-
-Then add the hook to your `~/.claude/settings.json` in the `Stop` hooks array:
-
-```json
-{
-  "hooks": {
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/scripts/covibe-sync.sh"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
+The install script copies the skill, coordination skill, and hook script. You'll still need to add the Stop hook to `settings.json` manually (the script tells you how).
 
 ## Usage
 

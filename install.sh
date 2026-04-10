@@ -6,15 +6,14 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "Installing CoVibe..."
 
-# Skill
+# Skills
 mkdir -p ~/.claude/skills/covibe
 cp "$SCRIPT_DIR/skills/covibe/SKILL.md" ~/.claude/skills/covibe/SKILL.md
-echo "  Skill installed at ~/.claude/skills/covibe/SKILL.md"
+echo "  /covibe skill installed"
 
-# Rule
-mkdir -p ~/.claude/rules
-cp "$SCRIPT_DIR/rules/covibe-coordination.md" ~/.claude/rules/covibe-coordination.md
-echo "  Rule installed at ~/.claude/rules/covibe-coordination.md"
+mkdir -p ~/.claude/skills/covibe-coordination
+cp "$SCRIPT_DIR/skills/covibe-coordination/SKILL.md" ~/.claude/skills/covibe-coordination/SKILL.md
+echo "  Coordination guidance installed"
 
 # Hook script
 mkdir -p ~/.claude/scripts

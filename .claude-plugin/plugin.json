@@ -1,0 +1,9 @@
+{
+  "name": "covibe",
+  "description": "Multiplayer Claude Code — coordinate multiple sessions through a shared git repo",
+  "author": {
+    "name": "Playful Sincerity",
+    "email": "wisdom@playfulsincerity.org"
+  },
+  "version": "1.0.0"
+}

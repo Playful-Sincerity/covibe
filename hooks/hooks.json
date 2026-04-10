@@ -1,0 +1,16 @@
+{
+  "description": "CoVibe auto-sync — commits and pushes .covibe/ changes after each response",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/covibe-sync.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}
