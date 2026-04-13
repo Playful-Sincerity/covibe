@@ -12,7 +12,7 @@
       "name": "covibe",
       "description": "Multiplayer Claude Code — coordinate multiple sessions through a shared git repo",
       "source": ".",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "category": "productivity"
     }
   ]
