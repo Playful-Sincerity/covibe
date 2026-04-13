@@ -1,20 +1,20 @@
 ---
 name: covibe-coordination
 description: Enforces multiplayer coordination when a CoVibe session is active. Activates when /tmp/.covibe-active exists. Makes Claude read other sessions before major work, update its own session after actions, and flag overlapping work.
-version: 1.0.0
+version: 1.2.0
 ---
 
 # CoVibe Coordination Protocol
 
-This guidance activates only when a CoVibe session is running. Check by reading `/tmp/.covibe-active`. If the file doesn't exist, none of this applies.
+This guidance applies when a CoVibe session is running. At the start of each conversation turn where you haven't checked recently, check for an active session:
 
-## Activation Check
-
-At the start of each conversation turn where you haven't checked recently:
 ```bash
 cat /tmp/.covibe-active 2>/dev/null
 ```
-If it returns content, parse `repo=` and `user=` values. You are in a CoVibe session.
+
+If the file doesn't exist or is empty, skip this protocol entirely — there is no active CoVibe session.
+
+If it returns content, parse `repo=` and `user=` values. You are in a CoVibe session. Follow the protocol below.
 
 ## Identity
 
@@ -47,6 +47,13 @@ Watch for and flag:
 - Another session editing the same files you're touching
 - Job dependency changes that affect your current work
 - Blockers resolved that unblock other sessions
+
+## Overlap Detection
+
+When reading other session files before work, compare their `Files Touched` and `Current Task` with your planned work. If there's overlap:
+1. Flag it to the user with specifics (which files, which session)
+2. Suggest posting a message to coordinate
+3. Wait for the user's decision before proceeding
 
 ## Session File Hygiene
 
