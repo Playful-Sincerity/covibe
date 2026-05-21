@@ -42,6 +42,13 @@ Watch for and flag:
 - Job dependency changes that affect your current work
 - Blockers resolved that unblock other sessions
 
+## Overlap Detection
+
+When reading other session files before work, compare their `Files Touched` and `Current Task` with your planned work. If there's overlap:
+1. Flag it to the user with specifics (which files, which session)
+2. Suggest posting a message to coordinate
+3. Wait for the user's decision before proceeding
+
 ## Session File Hygiene
 
 Your session file is a real-time snapshot, not a growing log. Replace the `Current Task` section with each new task. Keep `Recent Actions` trimmed to the last ~10 entries. The file should be useful to someone scanning it in 5 seconds.

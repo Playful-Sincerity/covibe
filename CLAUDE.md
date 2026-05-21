@@ -11,8 +11,11 @@ No server. No extra infrastructure. Just a `/covibe` skill, a coordination rule,
 | Component | Source | Install Target |
 |-----------|--------|---------------|
 | `/covibe` skill | `skills/covibe/SKILL.md` | `~/.claude/skills/covibe/SKILL.md` |
+| Coordination skill | `skills/covibe-coordination/SKILL.md` | `~/.claude/skills/covibe-coordination/SKILL.md` |
 | Coordination rule | `rules/covibe-coordination.md` | `~/.claude/rules/covibe-coordination.md` |
 | Sync hook | `scripts/covibe-sync.sh` | `~/.claude/scripts/covibe-sync.sh` |
+
+The coordination skill and rule contain the same protocol. Plugin installs use the skill; manual installs can use either. The rule is conditional (activates only when `/tmp/.covibe-active` exists). The skill checks the same marker at the start of each turn.
 
 ## Architecture
 
@@ -39,7 +42,9 @@ The sync hook auto-commits and pushes `.covibe/` changes after each Claude respo
 
 ## Phases
 
-- **V1 (current):** Git-based coordination. Skill + rule + hook.
+- **V1.2 (current):** Full job lifecycle. Review/merge workflow, archive/cleanup, reassign/unblock, DAG validation, phase progress tracking, .gitattributes for merge prevention, hardened sync hook with error reporting.
+- **V1.1:** Cross-platform sync hook, rejoin protocol, read tracking, stale session detection.
+- **V1.0:** Initial release. Skill + rule + hook.
 - **V2:** Agent SDK server with web UI, SSE streaming, rooms.
 - **V3:** Spatial Workspace integration — job board and sessions on a 2D canvas.
 
